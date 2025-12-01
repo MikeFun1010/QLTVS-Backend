@@ -17,9 +17,9 @@ namespace QLTVS.API.Controllers
         [HttpGet("all")]
         public IActionResult GetAll()
         {
-            var members = _memberBUS.GetAllMembers();
+            var accounts = _memberBUS.GetAllMembers();
             // *LƯU Ý: WinForms sẽ cần map list Taikhoan này thành MemberResponseDTO*
-            return Ok(members);
+            return Ok(accounts);
         }
 
         // [POST] Thêm Sinh Viên
