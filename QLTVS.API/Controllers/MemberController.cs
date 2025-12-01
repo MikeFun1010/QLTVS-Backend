@@ -13,6 +13,16 @@ namespace QLTVS.API.Controllers
 
         public MemberController(MemberBUS memberBUS) { _memberBUS = memberBUS; }
 
+        // [GET] Lấy tất cả
+        [HttpGet("all")]
+        public IActionResult GetAll()
+        {
+            var accounts = _memberBUS.GetAllMembers();
+            // *LƯU Ý: WinForms sẽ cần map list Taikhoan này thành MemberResponseDTO*
+            return Ok(accounts);
+        }
+
+        // [POST] Thêm Sinh Viên
         [HttpPost("add-student")]
         public IActionResult AddStudent([FromBody] SinhVienDTO dto)
         {
@@ -25,6 +35,7 @@ namespace QLTVS.API.Controllers
             return BadRequest(new { message = "Thêm thất bại (Mã SV có thể đã tồn tại)." });
         }
 
+        // [POST] Thêm Quản Lý
         [HttpPost("add-manager")]
         public IActionResult AddManager([FromBody] QuanLyDTO dto)
         {
@@ -35,6 +46,21 @@ namespace QLTVS.API.Controllers
 
             if (result) return Ok(new { message = "Thêm quản lý thành công." });
             return BadRequest(new { message = "Thêm thất bại." });
+        }
+
+        // [DELETE] Xóa thành viên
+        [HttpDelete("delete/{loai}/{ma}")]
+        public IActionResult DeleteMember(string loai, string ma)
+        {
+            if (string.IsNullOrEmpty(ma) || (loai != "SV" && loai != "QL"))
+            {
+                return BadRequest(new { message = "Tham số không hợp lệ." });
+            }
+
+            bool result = _memberBUS.DeleteMember(ma, loai);
+
+            if (result) return Ok(new { message = "Xóa thành viên thành công." });
+            return NotFound(new { message = "Không tìm thấy thành viên để xóa." });
         }
     }
 }
