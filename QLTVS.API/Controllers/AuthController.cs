@@ -9,31 +9,24 @@ namespace QLTVS.API.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly MemberBUS _memberBUS;
+        private readonly AuthBUS _authBUS;
 
-        public AuthController(MemberBUS memberBUS)
-        {
-            _memberBUS = memberBUS;
-        }
+        public AuthController(AuthBUS authBUS) { _authBUS = authBUS; }
 
         [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginDTO loginDto)
+        public IActionResult Login([FromBody] LoginRequestDTO request)
         {
-            var user = _memberBUS.CheckLogin(loginDto);
+            if (string.IsNullOrEmpty(request.TenDangNhap) || string.IsNullOrEmpty(request.MatKhau))
+                return BadRequest(new LoginResponseDTO { IsSuccess = false, Message = "Vui lòng nhập đầy đủ." });
 
-            if (user == null)
+            var response = _authBUS.Authenticate(request);
+
+            if (response.IsSuccess)
             {
-                return Unauthorized("Tên đăng nhập hoặc mật khẩu không đúng.");
+                return Ok(response);
             }
 
-            // Trả về JSON chứa thông tin user + Vai trò
-            return Ok(new
-            {
-                Username = user.Tendangnhap,
-                Role = user.Vaitro, // Quan trọng: Winform sẽ dùng cái này để phân quyền
-                MaSV = user.Masv,
-                MaQL = user.Maql
-            });
+            return Unauthorized(response);
         }
     }
 }

@@ -11,24 +11,18 @@ namespace QLTVS.API.Controllers
     {
         private readonly MemberBUS _memberBUS;
 
-        public MemberController(MemberBUS memberBUS)
-        {
-            _memberBUS = memberBUS;
-        }
+        public MemberController(MemberBUS memberBUS) { _memberBUS = memberBUS; }
 
         [HttpPost("add-student")]
         public IActionResult AddStudent([FromBody] SinhVienDTO dto)
         {
-            // Validate đơn giản
             if (string.IsNullOrEmpty(dto.MaSv) || string.IsNullOrEmpty(dto.HoTen))
                 return BadRequest("Thông tin không hợp lệ.");
 
             bool result = _memberBUS.CreateStudent(dto);
 
-            if (result)
-                return Ok(new { message = "Thêm sinh viên thành công." });
-            else
-                return BadRequest(new { message = "Thêm thất bại. Mã sinh viên có thể đã tồn tại." });
+            if (result) return Ok(new { message = "Thêm sinh viên thành công." });
+            return BadRequest(new { message = "Thêm thất bại (Mã SV có thể đã tồn tại)." });
         }
 
         [HttpPost("add-manager")]
@@ -39,10 +33,8 @@ namespace QLTVS.API.Controllers
 
             bool result = _memberBUS.CreateManager(dto);
 
-            if (result)
-                return Ok(new { message = "Thêm quản lý thành công." });
-            else
-                return BadRequest(new { message = "Thêm thất bại." });
+            if (result) return Ok(new { message = "Thêm quản lý thành công." });
+            return BadRequest(new { message = "Thêm thất bại." });
         }
     }
 }

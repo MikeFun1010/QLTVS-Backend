@@ -28,7 +28,8 @@ namespace QLTVS.API
             // Nguyên tắc: Interface/Class nào được dùng trong Constructor thì phải đăng ký ở đây
             builder.Services.AddScoped<MemberDAO>(); // Đăng ký DAO
             builder.Services.AddScoped<MemberBUS>(); // Đăng ký BUS
-
+            builder.Services.AddScoped<AuthDAO>();   // Đăng ký cho logic xác thực Database
+            builder.Services.AddScoped<AuthBUS>();   // Đăng ký cho logic nghiệp vụ Đăng nhập
             // ==================================================================
             // 3. CÁC CẤU HÌNH CƠ BẢN KHÁC
             // ==================================================================
